@@ -1,0 +1,7 @@
+docker run -it --name Arcade_container -h Arcade_container --network="host" --ipc=host \
+    -v YOUR_REPO_PATH/Arcade-DQN-Research-fMRI/Code/Task:/workspace/Task \
+    -v YOUR_REPO_PATH/Arcade-DQN-Research-fMRI/Code/DQN/ROMs: /workspace/ROMs \
+    -v /tmp/.X11-unix:/tmp/.X11-unix \
+    -e DISPLAY \
+    docker_image bash
+

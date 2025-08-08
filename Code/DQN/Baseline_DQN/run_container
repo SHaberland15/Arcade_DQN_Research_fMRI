@@ -1,0 +1,7 @@
+docker run -it --gpus all --name baseline_container -h baseline_container \
+    -v YOUR_REPO_PATH/Arcade-DQN-Research-fMRI/Code/DQN/BaselineDQN/container_mount:/workspace/container_mount \
+    -v YOUR_REPO_PATH/Arcade-DQN-Research-fMRI/Code/DQN/ROMs: /workspace/ROMs \
+    -v YOUR_DATA_PATH/osfstorage-archive: /workspace/data \
+    -v /tmp/.X11-unix:/tmp/.X11-unix \
+    -e DISPLAY \
+    baseline_image bash

@@ -1,0 +1,1 @@
+docker build -t apex_image -f dockerfile . 

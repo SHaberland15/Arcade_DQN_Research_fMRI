@@ -1,0 +1,169 @@
+function S01_calculate_timing_vector(subject, game, DQN)
+
+root_path = 'YOUR_DATA_PATH';
+main_dir = strcat(subject, '/', game) ;
+sess_no = 5;
+
+TR = 0.987;  % TR in seconds
+
+mkdir(strcat(root_path, main_dir, '/GLMs/'));
+
+mkdir(strcat(root_path, main_dir, '/GLMs/', GLM_name, '/'));
+
+for run_no = 1:sess_no
+
+    disp(run_no);
+    
+    clear trigger_vec_intro
+    clear trigger_vec
+    clear trigger_vec_outro
+    clear responses_vec
+    
+    trigger_vec_intro = dlmread(strcat(root_path, main_dir, '/', subject, '_', game, '_E_', num2str(run_no), '_trigger_vec_intro.csv'));
+    trigger_vec = dlmread(strcat(root_path, main_dir, '/', subject, '_', game, '_E_', num2str(run_no), '_trigger_vec.csv'));
+    trigger_vec_outro = dlmread(strcat(root_path, main_dir, '/', subject, '_', game, '_E_', num2str(run_no), '_trigger_vec_outro.csv'));
+    responses_vec = dlmread(strcat(root_path, main_dir, '/', subject, '_', game, '_E_', num2str(run_no), '_responses_vec.csv'));
+
+    % trigger intro
+
+    trigger_vec_intro_diff = [0; trigger_vec_intro(2:end,1) - trigger_vec_intro(1:end-1,1)];
+    
+    trigger_ind_intro = find(trigger_vec_intro_diff > 0);
+
+    trigger_ind_intro_diff = trigger_ind_intro(2:end,1) - trigger_ind_intro(1:end-1,1);
+
+    if any(trigger_ind_intro_diff < 43) || any(trigger_ind_intro_diff > 45)
+    
+        error('Check trigger_diff intro!');
+    
+    end
+    
+    no_of_volumes_to_remove = size(trigger_ind_intro,1) - 1;
+    
+    if no_of_volumes_to_remove ~= 4
+        
+        error(['Run ',num2str(run_no),': remove ',num2str(no_of_volumes_to_remove),' volumes!']);
+        
+    end
+
+    %% trigger main
+    
+    trigger_vec_diff = [0; trigger_vec(2:end,1) - trigger_vec(1:end-1,1)];
+
+    trigger_ind = [1; find(trigger_vec_diff)];
+
+    no_of_volumes_main = size(trigger_ind,1);
+    
+    trigger_diff = trigger_ind(2:end) - trigger_ind(1:end-1);
+    
+    if any(trigger_diff(2:end,1) < 43) || any(trigger_diff(2:end,1) > 46)
+    
+        error('Check trigger_diff main!');
+    
+    end
+
+    if any(trigger_diff(1,1) < 33) || any(trigger_diff(1,1) > 36)
+    
+        error('Check trigger_diff main!');
+    
+    end
+    
+    first_volume = no_of_volumes_to_remove + 1;
+    last_volume = no_of_volumes_to_remove + size(trigger_ind,1);
+
+    standard_trigger_diff = median(trigger_diff);
+    
+    time_in_sec_vec = NaN(size(trigger_vec,1),1);
+    
+    for trigger_no = 1:size(trigger_ind,1)
+
+        if trigger_no == 1
+
+            interval_length = trigger_diff(trigger_no,1);
+
+            first_trigger_loss_in_sec = TR*(standard_trigger_diff - interval_length)/standard_trigger_diff;
+
+            interval_vec = (TR - first_trigger_loss_in_sec)*(0:interval_length-1)'/interval_length + first_trigger_loss_in_sec;
+
+            time_in_sec_vec(trigger_ind(trigger_no,1):trigger_ind(trigger_no + 1,1) - 1, 1) = interval_vec;
+        
+        elseif trigger_no < size(trigger_ind,1)
+        
+            interval_length = trigger_diff(trigger_no,1);
+
+            start_time = TR*(trigger_no - 1);
+
+            interval_vec = TR*(0:interval_length-1)'/interval_length + start_time;
+
+            time_in_sec_vec(trigger_ind(trigger_no,1):trigger_ind(trigger_no + 1,1) - 1, 1) = interval_vec;
+
+        elseif trigger_no == size(trigger_ind,1)
+
+            interval_length = size(trigger_vec,1) - trigger_ind(trigger_no,1) + 1;
+
+            start_time = TR*(trigger_no - 1);
+
+            last_trigger_loss_in_sec = TR*(standard_trigger_diff - interval_length)/standard_trigger_diff;
+
+            interval_vec = (TR - last_trigger_loss_in_sec)*(0:interval_length-1)'/interval_length + start_time;
+
+            time_in_sec_vec(trigger_ind(trigger_no,1):size(trigger_vec,1), 1) = interval_vec;
+            
+        end
+        
+    end
+    
+    if any(isnan(time_in_sec_vec))
+        
+        error('NaN found in time_in_sec_vec!');
+        
+    end
+
+
+    %% trigger outro
+    if trigger_vec(end) ~= trigger_vec_outro(1)
+        trigger_vec_outro_diff = [1; trigger_vec_outro(2:end,1) - trigger_vec_outro(1:end-1,1)];
+    else
+        trigger_vec_outro_diff = [0; trigger_vec_outro(2:end,1) - trigger_vec_outro(1:end-1,1)];
+    end
+    
+    trigger_ind_outro = find(trigger_vec_outro_diff > 0);
+
+    trigger_ind_outro_diff = trigger_ind_outro(2:end,1) - trigger_ind_outro(1:end-1,1);
+
+    if any(trigger_ind_outro_diff < 43) || any(trigger_ind_outro_diff > 45)
+    
+        error('Check trigger_diff outro!');
+    
+    end
+    
+    no_of_volumes_outro = size(trigger_ind_outro,1);
+
+    if no_of_volumes_outro < 0 || no_of_volumes_outro > 2
+        
+        error(['Run ',num2str(run_no),': at end: ',num2str(no_of_volumes_outro),' volumes!']);
+        
+    end
+
+    no_of_volumes_sum = no_of_volumes_to_remove + no_of_volumes_main + no_of_volumes_outro;
+    
+    if no_of_volumes_sum ~= 430
+        
+        error(['Run ',num2str(run_no),': volumes overall: ',num2str(no_of_volumes_sum),' volumes!']);
+        
+    end
+    
+    n_time_bins_15_hz = size(time_in_sec_vec,1)/4;
+    
+    bin_15_hz = repmat([false false false true]', n_time_bins_15_hz, 1);
+    
+    time_in_sec_vec = time_in_sec_vec(bin_15_hz);
+    
+    save(strcat(root_path, main_dir, '/GLMs/removed_first_last_timing_sess_', num2str(run_no)),...
+    	'no_of_volumes_to_remove', 'first_volume', 'last_volume', 'time_in_sec_vec');
+    
+           
+end
+
+
+    

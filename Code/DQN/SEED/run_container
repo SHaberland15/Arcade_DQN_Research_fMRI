@@ -1,0 +1,8 @@
+docker run -it --gpus all --name seed_container -h seed_container \
+    --network="host" --ipc=host \
+    -v YOUR_REPO_PATH/Arcade-DQN-Research/Code/DQN/SEED/container_mount:/workspace/container_mount \
+    -v YOUR_REPO_PATH/Arcade-DQN-Research/Code/DQN/ROMs: /workspace/ROMs \
+    -v YOUR_DATA_PATH/osfstorage-archive: /workspace/data \
+    -v /tmp/.X11-unix:/tmp/.X11-unix \
+    -e DISPLAY \
+    seed_image bash

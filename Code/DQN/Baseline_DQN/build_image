@@ -1,0 +1,1 @@
+docker build -t baseline_image -f dockerfile . 
