@@ -1,4 +1,5 @@
 # Arcade_DQN_Research_fMRI
+[![DOI](https://zenodo.org/badge/1008921318.svg)](https://doi.org/10.5281/zenodo.17085736)  
 Associated Repository for the [manuskript]().
 
 <div style="text-align:center;">
