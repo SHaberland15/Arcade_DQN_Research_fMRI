@@ -7,7 +7,7 @@ Associated Repository for the [manuskript]().
 
 ## Repository Content
 This repository contains the code for the [paper]().
-The raw behavioral data, the experimental data and the analysis outcomes, including the correlation maps for each subject, are available on [OSF]().  
+The raw behavioral data, the experimental data and the analysis outcomes, including the correlation maps for each subject, are available on [OSF](https://osf.io/9cwq4/) (DOI: 10.17605/OSF.IO/9CWQ4).  
 The folder `Code` contains the code for the fMRI analysis, including code for the experiment (Python), DQNs (Baseline DQN\[1\], Ape-X\[2\], SEED\[3\]) and the GLM (MATLAB, SPM).
 
 ## Preparations
