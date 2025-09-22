@@ -1,13 +1,13 @@
 # Arcade_DQN_Research_fMRI
 [![DOI](https://zenodo.org/badge/1008921318.svg)](https://doi.org/10.5281/zenodo.17085736)  
-Associated Repository for the [manuskript]().
+Associated Repository for the [manuskript](https://www.biorxiv.org/content/10.1101/2025.09.19.677324v1).
 
 <div style="text-align:center;">
 <img src="./media/Visualization_DQN_fMRI.gif" alt="DQN" width="80%" height="80%">
 </div>
 
 ## Repository Content
-This repository contains the code for the [paper]().
+This repository contains the code for the [paper](https://www.biorxiv.org/content/10.1101/2025.09.19.677324v1) (DOI: 10.1101/2025.09.19.677324).
 The raw behavioral data, the experimental data and the analysis outcomes, including the correlation maps for each subject, are available on [OSF](https://osf.io/9cwq4/) (DOI: 10.17605/OSF.IO/9CWQ4).  
 The folder `Code` contains the code for the fMRI analysis, including code for the experiment (Python), DQNs (Baseline DQN\[1\], Ape-X\[2\], SEED\[3\]) and the GLM (MATLAB, SPM).
 
